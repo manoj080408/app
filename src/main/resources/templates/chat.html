@@ -38,7 +38,7 @@
     }
 
     function connect() {
-        var socket = new SockJS('/chat');   // MUST match WebSocketConfig
+        var socket = new SockJS('https://app-pxvs.onrender.com/chat');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, function (frame) {

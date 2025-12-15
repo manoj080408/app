@@ -349,6 +349,42 @@
         });
     }
 
+    function requestNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    new Notification('Chat App', {
+                        body: 'Notifications enabled! You\'ll be notified of new messages.',
+                        icon: '🔔',
+                        tag: 'welcome'
+                    });
+                }
+            });
+        }
+    }
+
+    function showNotification(sender, message) {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            if (document.hidden) {
+                var notification = new Notification(sender, {
+                    body: message,
+                    icon: '💬',
+                    tag: 'chat-message',
+                    requireInteraction: false
+                });
+
+                notification.onclick = function() {
+                    window.focus();
+                    notification.close();
+                };
+
+                setTimeout(function() {
+                    notification.close();
+                }, 5000);
+            }
+        }
+    }
+
     function setUsername() {
         var sender = document.getElementById('senderInput').value.trim();
 
@@ -363,6 +399,8 @@
         document.getElementById('nameInputContainer').classList.add('hidden');
         document.getElementById('messageInputContainer').classList.remove('hidden');
         document.getElementById('messageInput').focus();
+
+        requestNotificationPermission();
     }
 
     function showMessage(message) {
@@ -380,6 +418,8 @@
             sender.className = 'message-sender';
             sender.textContent = message.sender;
             bubble.appendChild(sender);
+
+            showNotification(message.sender, message.content);
         }
 
         var content = document.createElement('div');
